@@ -5,6 +5,7 @@ import time
 isNewMessage = False
 message1 = "hello"
 
+GOLBALSOCKET =None
 
 # test message test
 def testMessages():
@@ -15,7 +16,9 @@ def testMessages():
         time.sleep(2)
 
 #mannuly disconnection
-def closedSocketMannuly(client_socket):
+def closedSocketMannuly():
+    global GOLBALSOCKET
+    client_socket = GOLBALSOCKET
     # Simulate manual disconnection
     time.sleep(8)
     print("Manually disconnecting client socket...")
@@ -43,7 +46,7 @@ class SocketConnection:
         send_thread.start()
 
         # testing ---client disconnect mannualy--------------------------
-        send_thread = threading.Thread(target=closedSocketMannuly, args=(self.client_socket,))
+        send_thread = threading.Thread(target=closedSocketMannuly)
         send_thread.start()
 
         # testing ---send  message--------------------------
@@ -93,6 +96,7 @@ class SocketConnection:
 
 
 def main():
+    global GOLBALSOCKET
     host = '0.0.0.0'  # Listen on all available interfaces
     port = 9999  # Choose any available port number
 
@@ -104,6 +108,7 @@ def main():
 
         while True:
             client_socket, client_address = server_socket.accept()
+            GOLBALSOCKET = client_socket
 
             if not SocketConnection.is_client_connected:  # Check if another client is already connected
                 # Create a SocketConnection object for this client
