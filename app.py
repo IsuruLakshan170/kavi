@@ -2,17 +2,24 @@ import socket
 import threading
 import time
 
+filename = 'textfile.txt'
+
+with open(filename, 'r') as file:
+    file_content = file.read()
+
 isNewMessage = False
-message1 = "hello"
+message1= "[[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],[0,1,12],]"
+
+
 
 GOLBALSOCKET =None
 
 # test message test
 def testMessages():
     global isNewMessage, message1
-    for i in range(20):
+    for i in range(1):
         isNewMessage = True
-        message1 = f"hello{i}"
+        # message1 = f"hello{i}"
         time.sleep(2)
 
 #mannuly disconnection
@@ -46,8 +53,8 @@ class SocketConnection:
         send_thread.start()
 
         # testing ---client disconnect mannualy--------------------------
-        send_thread = threading.Thread(target=closedSocketMannuly)
-        send_thread.start()
+        # send_thread = threading.Thread(target=closedSocketMannuly)
+        # send_thread.start()
 
         # testing ---send  message--------------------------
         send_thread = threading.Thread(target=testMessages)
@@ -60,11 +67,22 @@ class SocketConnection:
         print(f"Server: Connection closed with {self.client_address}")
 
     def send_message(self):
-        global isNewMessage, message1
+        global isNewMessage, message1 ,file_content
         try:
             while self.client_socket.fileno() != -1:  # Check if the socket is still valid
                 if isNewMessage:
-                    self.client_socket.sendall((message1 + '\n').encode())
+                    # self.client_socket.sendall((message1 + '\n').encode())
+                    # self.client_socket.sendall(file_content.encode())
+
+                    filename = 'textfile.txt'
+                    with open(filename, 'rb') as file:
+                                # Read and send the file in chunks
+                                while True:
+                                    data = file.read(1024)
+                                    if not data:
+                                        break  # End of file
+                                    self.client_socket.sendall(data)
+
                     isNewMessage = False
                 time.sleep(0.1)  # Add a small delay to avoid tight loop when no messages to send
 
