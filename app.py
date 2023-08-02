@@ -14,11 +14,12 @@ def testMessages():
         message1 = f"hello{i}"
         time.sleep(2)
 
-
-# mannually disconnect
-def closedSocket():
-    print("")
-
+#mannuly disconnection
+def closedSocketMannuly(client_socket):
+    # Simulate manual disconnection
+    time.sleep(8)
+    print("Manually disconnecting client socket...")
+    client_socket.close()
 
 class SocketConnection:
     is_client_connected = False
@@ -27,6 +28,7 @@ class SocketConnection:
         self.client_socket = client_socket
         self.client_address = client_address
         
+
     def handle_connection(self):
         # Mark as connected
         SocketConnection.is_client_connected = True
@@ -38,6 +40,10 @@ class SocketConnection:
 
         # Start the thread to send messages to the client
         send_thread = threading.Thread(target=self.send_message)
+        send_thread.start()
+
+        # testing ---client disconnect mannualy--------------------------
+        send_thread = threading.Thread(target=closedSocketMannuly, args=(self.client_socket,))
         send_thread.start()
 
         # testing ---send  message--------------------------
@@ -78,8 +84,12 @@ class SocketConnection:
         except ConnectionResetError:
             # This exception will be raised when the client closes the connection
             pass
+        except ConnectionAbortedError:
+            # This exception will be raised when the client forcibly closes the connection
+            pass
         finally:
             self.close_connection()
+
 
 
 def main():
@@ -102,7 +112,7 @@ def main():
 
             else:
                 # Reject the connection if another client is already connected
-                rejection_message = "FAILD"
+                rejection_message = "FAILED"
                 client_socket.sendall(rejection_message.encode())
                 client_socket.close()
                 print(f"\033[31mServer: Connection request from {client_address} rejected. Another client is already connected.\033[0m")
