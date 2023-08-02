@@ -23,10 +23,10 @@ def closedSocket():
 class SocketConnection:
     is_client_connected = False
 
-    def _init_(self, client_socket, client_address):
+    def __init__(self, client_socket, client_address):
         self.client_socket = client_socket
         self.client_address = client_address
-
+        
     def handle_connection(self):
         # Mark as connected
         SocketConnection.is_client_connected = True
