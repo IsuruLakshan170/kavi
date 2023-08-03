@@ -7,7 +7,6 @@ with open(filename, 'w') as file:
 
 import os
 
-
 # Check if the file exists before reading
 if not os.path.exists(filename):
     print("File not found.")
