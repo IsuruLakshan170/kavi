@@ -17,18 +17,17 @@ GOLBALSOCKET =None
 
 # test message test
 def testMessagesSend():
-    global isNewMessage, MSGTYPE, MESSAGE
-    time.sleep(15)
-    isNewMessage = True
-    MSGTYPE = "TEXT"
-    MESSAGE="Hello 1"
-    time.sleep(10)
-    isNewMessage = True
-    MSGTYPE = "FILE"
-    time.sleep(10)
-    isNewMessage = True
-    MSGTYPE = "TEXT"
-    MESSAGE="Hello 2"
+        global isNewMessage, MSGTYPE ,MESSAGE
+        time.sleep(10)
+        print("Wait for user checkout finishing....")
+        time.sleep(20)
+        isNewMessage = True
+        MSGTYPE = "FILE"
+        # time.sleep(5)
+        # isNewMessage = True
+        # MSGTYPE = "TEXT"
+        # MESSAGE="Hello 2"
+
 
 #mannuly disconnection
 def closedSocketMannuly():
@@ -88,7 +87,7 @@ class SocketConnection:
                         self.client_socket.sendall((MESSAGE +"\n").encode())
                         isNewMessage = False
                     if(MSGTYPE == "FILE"):
-                        print("Current message : ",MESSAGE)                     
+                        print("Current message : File sending..")                     
                         self.client_socket.sendall(("FILE\n").encode())
                         filename = 'textfile.txt'
                         with open(filename, 'rb') as file:
@@ -123,7 +122,7 @@ class SocketConnection:
                     isFileReceiving = True
                     received_rows = []  # Reset received_rows when a new file transfer starts                                
                 elif isFileReceiving:
-                    print("Data Set Received : ",data)
+                    print("Data Set Received : \n",data)
                     with open("received_file.txt", "w") as file:
                         for row in data:
                             file.write(row)  # Write the row to the file as a new line
@@ -133,11 +132,21 @@ class SocketConnection:
                 elif data =="USER DATA":
                     isUserDataReceiving = True
                     print("User data received enabled : ",data)
+                    
 
                 elif isUserDataReceiving:
                     print("User Data Received : ",data)
-
-                
+                    data = data.strip("[]")  # Removing brackets from the string
+                    data_list = data.split(',')
+                    name = data_list[0]
+                    age = int(data_list[1])  # Converting age to an integer
+                    gender = int(data_list[2])  # Converting gender to an integer
+                    print("Name:", name)
+                    print("Age:", age)
+                    print("Gender:", gender)
+                    
+                    isUserDataReceiving = False
+               
         except ConnectionResetError:
             # This exception will be raised when the client closes the connection
             pass
@@ -146,8 +155,6 @@ class SocketConnection:
             pass
         finally:
             self.close_connection()
-
-
 
 def main():
     global GOLBALSOCKET

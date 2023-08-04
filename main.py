@@ -1,7 +1,7 @@
 filename = 'textfile.txt'
 
 with open(filename, 'w') as file:
-    for i in range(1, 1000):
+    for i in range(1, 11):
         row = f"[{i},{i},{i}]\n"
         file.write(row)
 
